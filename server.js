@@ -66,7 +66,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const corsOptions = {
-	origin: 'http://localhost:3000',
+	origin: '*',
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 	credentials: true,
 };
