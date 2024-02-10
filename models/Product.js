@@ -56,6 +56,7 @@ const productSchema = new mongoose.Schema({
   listingStatus: { type: String, enum: ['Active', 'Sold out', 'Inactive', 'Expired'], default: 'Active' },
   qtyInStock: { type: Number },
   photos: [{ type: String }],
+  aPlusPhotos: [{ type: String }],
   category: { type: String, },
   shopSection: { type: String },
   video: { type: String, },

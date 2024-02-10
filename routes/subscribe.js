@@ -1,9 +1,13 @@
 // routes/subscribe.js
 const express = require('express');
-const axios = require('axios');
 const router = express.Router();
-
 const Subscriber = require('../models/Subscriber');
+const { SendMailClient } = require("zeptomail");
+
+// Initialize Zeptomail client
+const zeptoMailUrl = "api.zeptomail.com/";
+const zeptoMailToken = "Zoho-enczapikey wSsVR61z8xOhW60vzmWtdO4wz11TAQ7xE0113Qb1viKqH//L9scylBDGVgemHKdKQjRpRjQao7ksnUgJ1WEH3IkpmFtSCCiF9mqRe1U4J3x17qnvhDzJVmhcmxuNLIMOwARok2VlE8Ai+g==";
+const zeptoMailClient = new SendMailClient({ url: zeptoMailUrl, token: zeptoMailToken });
 
 // POST route for subscription
 router.post('/subscribe', async (req, res) => {
@@ -18,44 +22,80 @@ router.post('/subscribe', async (req, res) => {
             return res.status(200).send('Email already subscribed!');
         }
 
-
         // Save the subscriber to the database
         const subscriber = new Subscriber({ email });
         await subscriber.save();
 
-        const brevoApiKey = process.env.BREVO;
-        const brevoApiUrl = 'https://api.brevo.com/v3/smtp/email';
-
-
-        // Send confirmation email with attractive HTML template
-        const brevoPayload = {
-            sender: {
-                name: 'KnitSilk',
-                email: 'webadmin@knitsilk.com',
+        // Construct email payload
+        const emailPayload = {
+            from: {
+                address: "noreply@globaltexmart.com",
+                name: "KnitSilk"
             },
-            to: [
-                {
-                    email: email,
-                }
-            ],
-            subject: 'Subscription Confirmation - Knitsilk Newsletter',
-            htmlContent: `
-                <div style="text-align: center; background-color: #6FA82F; color: white; padding: 20px;">
-                    <img src="https://knitsilk.netlify.app/static/media/Knitsilk%20logo.3188ad111cd972e3b365.png" alt="Knitsilk Logo" style="max-width: 200px; height: auto;">
-                    <h1>Welcome to Knitsilk Newsletter!</h1>
-                    <p>Thank you for subscribing to our newsletter. You are now part of the Knitsilk community, where we share the latest updates, promotions, and more!</p>
-                    <p style="font-size: 16px;">Stay tuned for exciting content from Knitsilk.</p>
-                </div>
-            `,
+            "to":
+                [
+                    {
+                        "email_address":
+                        {
+                            "address": email,
+                            "name": "KnitSilk"
+                        }
+                    }
+                ],
+
+            subject: "Subscription Confirmation - Knitsilk Newsletter",
+            htmlbody: `
+            <div
+            style="border: solid 1px #E5E5E5;border-radius: 5px;margin:0px auto; max-width:600px;width:600px;background:#fff;font-family: Lato, Helvetica, 'Helvetica Neue', Arial, 'sans-serif';">
+            <table cellspacing="0" cellpadding="0" style="width: 100%;font-size: 14px;">
+                <tbody>
+                    <tr>
+                        <td style="padding:32px">
+                            <div>
+                                <h1 style="margin: 0 0 32px;font-size:20px;text-align:center">
+                                    <span><img src="https://knitsilk.netlify.app/static/media/knitsilk%20black%20logo.42e4be1aa040e6f98e51.png" width="150" height="54" orig_width="500" orig_height="181"></span><br>
+                                </h1>
+                            </div>
+                            <div
+                                style="background: #fff;border-radius: 10px;overflow: hidden;border: solid 1px #E5E5E5;border-radius: 10px;">
+                                <table cellspacing="0" cellpadding="0" style="width:100%;font-size: 14px;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div style="padding: 32px 24px;text-align: center;">
+                                                    <h2 style="margin:0 0 20px;font-size: 20px;">Welcome To Knitsilk,<br></h2>
+                                                    <div>
+                                                        <span class="size" style="font-size:16px">Thank You for subscribing our Newsletter. You are now the part of knitsilk community, where we share latest updates, promotions &amp; more.</span><br>
+                                                    </div>
+                                                    <p style="line-height: 1.6; margin: 24px 0px 0px;">
+                                                        <span class="size" style="font-size: 16px">Stay Tuned for latest content from knitsilk.</span><br>
+                                                    </p>
+                                                    <div style="margin-top: 32px;line-height: 1.6;">
+                                                        <p style="margin: 0px;">
+                                                            <span class="size" style="font-size: 13px; margin: 0px;">Have a great day!</span><br>
+                                                        </p>
+                                                        <h3 style="font-size: 15px; margin: 4px 0 0;">Team KnitSilk<br></h3>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="margin-top: 32px;color:#888;text-align:center;">
+                                <div style="margin-bottom: 8px;font-size:11px;">© 2024, KnitSilk. All Rights Reserved.<br></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div><br></div>
+            `
         };
 
-        const brevoHeaders = {
-            'accept': 'application/json',
-            'api-key': brevoApiKey,
-            'content-type': 'application/json',
-        };
-
-        await axios.post(brevoApiUrl, brevoPayload, { headers: brevoHeaders });
+        // Send email using Zeptomail
+        await zeptoMailClient.sendMail(emailPayload);
 
         res.status(201).send('Subscription successful!');
     } catch (error) {
