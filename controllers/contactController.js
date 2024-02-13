@@ -1,5 +1,12 @@
 const Contact = require('../models/contactModel');
 const axios = require('axios');
+const { SendMailClient } = require("zeptomail");
+
+// Initialize Zeptomail client
+const zeptoMailUrl = "api.zeptomail.com/";
+const zeptoMailToken = "Zoho-enczapikey wSsVR61z8xOhW60vzmWtdO4wz11TAQ7xE0113Qb1viKqH//L9scylBDGVgemHKdKQjRpRjQao7ksnUgJ1WEH3IkpmFtSCCiF9mqRe1U4J3x17qnvhDzJVmhcmxuNLIMOwARok2VlE8Ai+g==";
+const zeptoMailClient = new SendMailClient({ url: zeptoMailUrl, token: zeptoMailToken });
+
 
 exports.submitForm = async (req, res) => {
     try {
@@ -9,24 +16,25 @@ exports.submitForm = async (req, res) => {
         const newContact = new Contact({ name, email, phone, subject, message });
         await newContact.save();
 
-        // Send confirmation email using Brevo API
-        const brevoApiKey = process.env.BREVO;
-
-        const brevoApiUrl = 'https://api.brevo.com/v3/smtp/email';
-
-        const brevoPayload = {
-            sender: {
-                name: 'Knitsilk',
-                email: 'noreply@knitsilk.com',
+        // Construct email payload
+        const emailPayload = {
+            from: {
+                address: "noreply@globaltexmart.com",
+                name: "KnitSilk"
             },
-            to: [
-                {
-                    email: email,
-                    name: name,
-                }
-            ],
+            "to":
+                [
+                    {
+                        "email_address":
+                        {
+                            "address": email,
+                            "name": name
+                        }
+                    }
+                ],
+
             subject: '🌟 Welcome to Knitsilk! Your Inquiry Received 🌟',
-            htmlContent: `<!DOCTYPE html>
+            htmlbody: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -105,14 +113,8 @@ exports.submitForm = async (req, res) => {
 
         };
 
-        const brevoHeaders = {
-            'accept': 'application/json',
-            'api-key': brevoApiKey,
-            'content-type': 'application/json',
-        };
-
-        await axios.post(brevoApiUrl, brevoPayload, { headers: brevoHeaders });
-
+        // Send email using Zeptomail
+        await zeptoMailClient.sendMail(emailPayload);
         res.status(200).json({ message: 'Form submitted successfully' });
     } catch (error) {
         console.error(error);
