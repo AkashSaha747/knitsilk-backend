@@ -586,22 +586,6 @@ app.post('/products/filterBySubcategories', async (req, res) => {
 		res.status(500).json({ error: 'Internal Server Error' });
 	}
 });
-app.post('/products/filterByCategory', async (req, res) => {
-	const {  category } = req.body;
-
-	try {
-		// Implement the logic to filter products based on subcategories and category
-		// Use Mongoose queries to fetch the filtered products
-		const filteredProducts = await Product.find({
-			category,
-		});
-
-		res.json(filteredProducts);
-	} catch (error) {
-		console.error('Error fetching products:', error);
-		res.status(500).json({ error: 'Internal Server Error' });
-	}
-});
 
 
 app.post('/products/colors', async (req, res) => {
