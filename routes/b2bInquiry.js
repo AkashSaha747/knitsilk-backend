@@ -2,12 +2,6 @@ const express = require('express');
 const router = express.Router();
 const B2BInquiry = require('../models/B2BInquiry');
 const axios = require('axios');
-const { SendMailClient } = require("zeptomail");
-
-// Initialize Zeptomail client
-const zeptoMailUrl = "api.zeptomail.com/";
-const zeptoMailToken = "Zoho-enczapikey wSsVR61z8xOhW60vzmWtdO4wz11TAQ7xE0113Qb1viKqH//L9scylBDGVgemHKdKQjRpRjQao7ksnUgJ1WEH3IkpmFtSCCiF9mqRe1U4J3x17qnvhDzJVmhcmxuNLIMOwARok2VlE8Ai+g==";
-const zeptoMailClient = new SendMailClient({ url: zeptoMailUrl, token: zeptoMailToken });
 
 
 // POST route for B2B inquiry
@@ -25,30 +19,27 @@ router.post('/', async (req, res) => {
             name,
             email,
             phone,
-            messages,
+            messages,            
         });
 
         await b2bInquiry.save();
+        const brevoApiKey = process.env.BREVO;
 
-        // Construct email payload
-        const emailPayload = {
-            from: {
-                address: "noreply@globaltexmart.com",
-                name: "KnitSilk"
+        const brevoApiUrl = 'https://api.brevo.com/v3/smtp/email';
+
+        const brevoPayload = {
+            sender: {
+                name: 'Knitsilk',
+                email: 'enquiry@knitsilk.com',
             },
-            "to":
-                [
-                    {
-                        "email_address":
-                        {
-                            "address": email,
-                            "name": name
-                        }
-                    }
-                ],
-
+            to: [
+                {
+                    email: email,
+                    name: name,
+                }
+            ],
             subject: '🌟 B2B Inquiry Confirmation - Knitsilk 🌟',
-            htmlbody: `
+            htmlContent: `
             <div style="font-family: 'Arial', sans-serif; text-align: center; background-color: #f8f8f8; padding: 20px;">
             <div style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
           
@@ -80,8 +71,12 @@ router.post('/', async (req, res) => {
   `,
         };
 
-        // Send email using Zeptomail
-        await zeptoMailClient.sendMail(emailPayload);
+        const brevoHeaders = {
+            'accept': 'application/json',
+            'api-key': brevoApiKey,
+            'content-type': 'application/json',
+        };
+        await axios.post(brevoApiUrl, brevoPayload, { headers: brevoHeaders });
         res.status(201).send('B2B Inquiry submitted successfully!');
     } catch (error) {
         console.error('Error submitting B2B Inquiry:', error);

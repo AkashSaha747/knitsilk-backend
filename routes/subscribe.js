@@ -9,7 +9,6 @@ const zeptoMailUrl = "api.zeptomail.com/";
 const zeptoMailToken = "Zoho-enczapikey wSsVR61z8xOhW60vzmWtdO4wz11TAQ7xE0113Qb1viKqH//L9scylBDGVgemHKdKQjRpRjQao7ksnUgJ1WEH3IkpmFtSCCiF9mqRe1U4J3x17qnvhDzJVmhcmxuNLIMOwARok2VlE8Ai+g==";
 const zeptoMailClient = new SendMailClient({ url: zeptoMailUrl, token: zeptoMailToken });
 
-
 // POST route for subscription
 router.post('/subscribe', async (req, res) => {
     try {
