@@ -1001,7 +1001,7 @@ app.get("/getuser/:id", async (req, res) => {
 // delete selected user
 app.delete('/delete/messages', async (req, res) => {
     const { userID } = req.body;
-
+console.log(userID);
     try {
         // Delete messages for the provided user IDs
         const result = await Message.deleteMany({ sender: { $in: userID } });
