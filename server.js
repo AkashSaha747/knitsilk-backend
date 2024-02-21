@@ -42,6 +42,7 @@ const messagesRouter = require('./routes/messages');
 const subcategory = require("./models/subcategoryModel");
 const subscribeRoutes = require('./routes/subscribe');
 const promoCodeRoutes = require('./routes/promoCodeRoutes');
+const campaignRoutes =  require('./routes/campaignRoutes.js')
 const b2b = require('./routes/b2bInquiry');
 const couponRoutes = require('./routes/couponRoutes');
 const order = require("./models/order");
@@ -96,10 +97,12 @@ app.use('/discount', couponRoutes);
 app.use('/campaign', emailRoutes)
 app.use('/blogs', blogRoutes);
 app.use('/promo-codes', promoCodeRoutes);
+app.use('/email', campaignRoutes)
 
 const razorpayRoute = require('./routes/razorpayRoute');
 const orderDraft = require("./models/orderDraft");
 const adminStatus = require("./models/adminstatus.js");
+const Message = require("./models/Message.js");
 
 app.use("/api", razorpayRoute);
 
@@ -999,9 +1002,10 @@ app.get("/getuser/:id", async (req, res) => {
 
 
 
+
 // delete selected user
 app.post('/delete/messages', async (req, res) => {
-    const { selectedUserIDs  } = req.body;
+    const {selectedUserIDs}   = req.body;
 console.log(selectedUserIDs );
     try {
         // Delete messages for the provided user IDs
@@ -1010,13 +1014,16 @@ console.log(selectedUserIDs );
         if (result.deletedCount > 0) {
             return res.status(200).json({ success: true, message: 'Messages deleted successfully' });
         } else {
-            return res.status(404).json({ success: false, message: 'No messages found for the provided user IDs' });
+            return res.status(200).json({ success: false, message: 'No messages found for the provided user IDs' });
         }
     } catch (error) {
         console.error('Error deleting messages:', error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
+
+
+
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

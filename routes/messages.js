@@ -5,20 +5,20 @@ const { authenticate } = require('../middleware/authenticate');
 const { GoogleUsermodel } = require('../models/google.user.model ');
 
 // Get all messages for all users
-router.get('/getallusers',async (req, res) => {
+router.get('/getallusers', async (req, res) => {
     try {
         const messages = await Message.find();
-        res.send({messages});
+        res.send({ messages });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 // Get all messages
-router.get('/', authenticate,async (req, res) => {
-    let userID=req.userID;
+router.get('/', authenticate, async (req, res) => {
+    let userID = req.userID;
     console.log(userID);
-    reciever="Admin"
-    sender=userID;
+    reciever = "Admin"
+    sender = userID;
     try {
         const messages = await Message.find(
             {
@@ -28,16 +28,16 @@ router.get('/', authenticate,async (req, res) => {
                 ]
             }
         );
-        res.send({messages});
+        res.send({ messages });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 // Get all messages (admin)
-router.get('/admin',async (req, res) => {
-let sender="Admin";
-// will get the user id from frontend by passing in body
-let {reciever}=req.query;
+router.get('/admin', async (req, res) => {
+    let sender = "Admin";
+    // will get the user id from frontend by passing in body
+    let { reciever } = req.query;
     try {
         const messages = await Message.find({
             $or: [
@@ -45,7 +45,7 @@ let {reciever}=req.query;
                 { sender: reciever, reciever: sender }
             ]
         });
-        res.send({messages});
+        res.send({ messages });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -53,16 +53,16 @@ let {reciever}=req.query;
 
 // Create a new message
 router.post('/admin', async (req, res) => {
-    let id=req.query;
+    let id = req.query;
     console.log(id);
     // here id is{reciever:"user id as in db"}
     // here sender is userToken
-    let{sender ,message} = req.body;
-// console.log(sender,reciever,message);
+    let { sender, message } = req.body;
+    // console.log(sender,reciever,message);
     const messagebody = new Message({
         message,
         sender,
-        reciever:id.reciever
+        reciever: id.reciever
     });
 
     try {
@@ -74,11 +74,11 @@ router.post('/admin', async (req, res) => {
 });
 
 // Create a new message
-router.post('/',authenticate, async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
     // here sender is userToken
-    let{sender ,reciever,message} = req.body;
-    let userID=req.userID;
-    console.log(req.userID,sender ,reciever,message)
+    let { sender, reciever, message } = req.body;
+    let userID = req.userID;
+    console.log(req.userID, sender, reciever, message)
     const messagebody = new Message({
         message: req.body.message,
         sender: userID,
