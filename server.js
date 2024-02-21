@@ -998,13 +998,14 @@ app.get("/getuser/:id", async (req, res) => {
 });
 
 
+
 // delete selected user
 app.post('/delete/messages', async (req, res) => {
-    const { selectedUserIDs } = req.body;
-console.log(selectedUserIDs);
+    const { selectedUserIDs  } = req.body;
+console.log(selectedUserIDs );
     try {
         // Delete messages for the provided user IDs
-        const result = await Message.deleteMany({ $or: [{ sender: selectedUserIDs }, { reciever: selectedUserIDs }] });
+        const result = await Message.deleteMany({ $or: [{ sender: selectedUserIDs  }, { reciever: selectedUserIDs  }] });
 
         if (result.deletedCount > 0) {
             return res.status(200).json({ success: true, message: 'Messages deleted successfully' });
