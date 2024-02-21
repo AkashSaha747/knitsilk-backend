@@ -999,23 +999,23 @@ app.get("/getuser/:id", async (req, res) => {
 
 
 // delete selected user
-
 app.delete('/delete/messages', async (req, res) => {
-	const { userID } = req.body;
-  
-	try {
-	  // Delete messages for the provided user ID
-	  const result = await Message.deleteMany({ $or: [{ sender: userID }] });
-  
-	  if (result.deletedCount > 0) {
-		return res.status(200).json({ success: true, message: 'Messages deleted successfully' });
-	  } else {
-		return res.status(404).json({ success: false, message: 'No messages found for the provided user ID' });
-	  }
-	} catch (error) {
-	  console.error('Error deleting messages:', error);
-	  return res.status(500).json({ success: false, message: 'Internal server error' });
-	}
-  });
+    const { userID } = req.body;
+
+    try {
+        // Delete messages for the provided user IDs
+        const result = await Message.deleteMany({ sender: { $in: userID } });
+
+        if (result.deletedCount > 0) {
+            return res.status(200).json({ success: true, message: 'Messages deleted successfully' });
+        } else {
+            return res.status(404).json({ success: false, message: 'No messages found for the provided user IDs' });
+        }
+    } catch (error) {
+        console.error('Error deleting messages:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
