@@ -999,7 +999,7 @@ app.get("/getuser/:id", async (req, res) => {
 
 
 // delete selected user
-app.delete('/delete/messages', async (req, res) => {
+app.post('/delete/messages', async (req, res) => {
     const { userID } = req.body;
 console.log(userID);
     try {
