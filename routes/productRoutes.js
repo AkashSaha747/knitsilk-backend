@@ -68,6 +68,10 @@ router.post('/products', upload.single('photo'), async (req, res) => {
       HSNCode,
       personalization,
       handPaintedOrDyed,
+      handPainted,
+      handDyed,
+      handMade,
+      organic,
       pleatedOrRuffled,
       wired,
       cutToSize,
@@ -85,6 +89,8 @@ router.post('/products', upload.single('photo'), async (req, res) => {
       widthUnit,
       packageWeight,
       packageDimensions,
+      packageDimensionsUnit,
+      productDimensionsUnit,
       bulletPoints,
       productLength,
       productWidth,
@@ -96,6 +102,8 @@ router.post('/products', upload.single('photo'), async (req, res) => {
       qtyVariations,
       colorVariations,
       sku,
+      qtyUnit,
+      lengthVariationUnit
     } = req.body;
 
     const product = new Product({
@@ -146,6 +154,10 @@ router.post('/products', upload.single('photo'), async (req, res) => {
       priceAUD,
       priceJPY,
       handPaintedOrDyed,
+      handPainted,
+      handDyed,
+      handMade,
+      organic,
       pleatedOrRuffled,
       wired,
       cutToSize,
@@ -164,6 +176,8 @@ router.post('/products', upload.single('photo'), async (req, res) => {
       widthUnit,
       packageWeight,
       packageDimensions,
+      packageDimensionsUnit,
+      productDimensionsUnit,
       bulletPoints,
       productLength,
       productWidth,
@@ -175,6 +189,8 @@ router.post('/products', upload.single('photo'), async (req, res) => {
       qtyVariations,
       colorVariations,
       sku,
+      qtyUnit,
+      lengthVariationUnit
     });
     await product.save();
     res.status(201).json(product);
