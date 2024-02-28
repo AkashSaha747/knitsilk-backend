@@ -115,6 +115,8 @@ const productSchema = new mongoose.Schema({
   colorVariations: [colorVariationSchema],
   sku: { type: String },
   qtyUnit:{type:String},
+  qtyVariationValue:{type:String},
+  lengthVariationValue:{type:String},
   lengthVariationUnit:{type:String},
 });
 

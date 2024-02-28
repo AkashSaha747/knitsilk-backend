@@ -103,7 +103,9 @@ router.post('/products', upload.single('photo'), async (req, res) => {
       colorVariations,
       sku,
       qtyUnit,
-      lengthVariationUnit
+      lengthVariationUnit,
+      qtyVariationValue,
+      lengthVariationValue,
     } = req.body;
 
     const product = new Product({
@@ -190,7 +192,9 @@ router.post('/products', upload.single('photo'), async (req, res) => {
       colorVariations,
       sku,
       qtyUnit,
-      lengthVariationUnit
+      lengthVariationUnit,
+      qtyVariationValue,
+      lengthVariationValue
     });
     await product.save();
     res.status(201).json(product);
@@ -374,6 +378,19 @@ router.post('/products/delete-multiple', async (req, res) => {
     res.json({ message: 'Products deleted successfully' });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// GET endpoint for fetching products by SKU
+router.get('/products/sku/:sku', async (req, res) => {
+  try {
+    const products = await Product.find({ sku: req.params.sku });
+    if (products.length === 0) {
+      return res.status(404).json({ error: 'No products found with the specified SKU' });
+    }
+    res.json(products);
+  } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
